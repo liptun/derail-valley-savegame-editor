@@ -12,16 +12,22 @@ if (require("electron-squirrel-startup")) {
     app.quit();
 }
 
-const handleFileOpen = async () => {
+export interface HandleFileOpen {
+    canceled: boolean;
+    path?: string;
+    content?: string;
+}
+const handleFileOpen = async (): Promise<HandleFileOpen> => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
         properties: ["openFile"],
     });
     if (!canceled) {
-        const data = fs.readFileSync(filePaths[0]);
+        const path = filePaths[0];
+        const data = fs.readFileSync(path);
         const content = data.toString();
-        return content;
+        return { content, path, canceled };
     }
-    return false;
+    return { canceled };
 };
 
 const createWindow = (): void => {
