@@ -1,4 +1,5 @@
 import AESDecrypt from "./AESDecrypt";
+import AESEncrypt from "./AESEncrypt";
 import { fromBase64, toBase64 } from "./cyberchef/lib/Base64";
 
 const key = "AEILMMHGsFFguLlKwyUZIGTRdEpokqAAjMcvV1boFMI=";
@@ -19,4 +20,9 @@ export const savegameDecodeToJSON = (savegame: string): Promise<string> =>
             reject(e);
         }
     });
-export const savegameEncodeFromJSON = (savegame: string) => savegame;
+export const savegameEncodeFromJSON = (savegame: any) => {
+    const jsonString = JSON.stringify(savegame);
+    const AESEncrypted = AESEncrypt({ input: jsonString, key, iv });
+    const encodeBase64 = toBase64(AESEncrypted);
+    return encodeBase64;
+};

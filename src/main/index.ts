@@ -30,6 +30,17 @@ const handleFileOpen = async (): Promise<HandleFileOpen> => {
     return { canceled };
 };
 
+export interface HandleFileWriteArgs {
+    path: string;
+    content: string;
+}
+const handleFileWrite = (
+    _: Event,
+    { path, content }: HandleFileWriteArgs
+) => {
+    fs.writeFileSync(path, content);
+};
+
 const createWindow = (): void => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
@@ -49,6 +60,7 @@ const createWindow = (): void => {
     mainWindow.webContents.openDevTools();
 
     ipcMain.handle("dialog:openFile", handleFileOpen);
+    ipcMain.handle("file:write", handleFileWrite);
 };
 
 // This method will be called when Electron has finished
