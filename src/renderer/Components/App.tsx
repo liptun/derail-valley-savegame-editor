@@ -5,6 +5,7 @@ import {
 } from "../../utils/savegame";
 import { ElectronAPI } from "../../preload";
 import ReactJson from "react-json-view";
+import { Savegame } from "../../types/savegame";
 
 declare global {
     interface Window {
@@ -15,7 +16,7 @@ declare global {
 const App: FC = () => {
     const [isLoading, setLoading] = useState(false);
     const [path, setPath] = useState("");
-    const [savegameJSON, setSavegameJSON] = useState({});
+    const [savegameJSON, setSavegameJSON] = useState<Savegame>(null);
     const [savegame, setSavegame] = useState("");
 
     const onOpenFileHandle = async () => {
