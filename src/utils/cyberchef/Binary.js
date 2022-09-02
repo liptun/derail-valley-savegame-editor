@@ -6,8 +6,8 @@
  * @license Apache-2.0
  */
 
-import Utils from "../Utils";
-import OperationError from "../OperationError";
+import Utils from "./Utils";
+import OperationError from "./OperationError";
 
 
 /**

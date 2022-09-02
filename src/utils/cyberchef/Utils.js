@@ -5,10 +5,10 @@
  */
 
 import utf8 from "utf8";
-import { fromBase64, toBase64 } from "./lib/Base64";
-import { fromHex } from "./lib/Hex";
-import { fromDecimal } from "./lib/Decimal";
-import { fromBinary } from "./lib/Binary";
+import { fromBase64, toBase64 } from "./Base64";
+import { fromHex } from "./Hex";
+import { fromDecimal } from "./Decimal";
+import { fromBinary } from "./Binary";
 
 /**
  * Utility functions for use in operations, the core framework and the stage.

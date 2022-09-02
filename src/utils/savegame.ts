@@ -1,6 +1,6 @@
 import AESDecrypt from "./AESDecrypt";
 import AESEncrypt from "./AESEncrypt";
-import { fromBase64, toBase64 } from "./cyberchef/lib/Base64";
+import { fromBase64, toBase64 } from "./cyberchef/Base64";
 
 const key = "AEILMMHGsFFguLlKwyUZIGTRdEpokqAAjMcvV1boFMI=";
 const iv = "pemgail9uzpgzl88";

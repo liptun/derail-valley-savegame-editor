@@ -6,8 +6,8 @@
  * @license Apache-2.0
  */
 
-import Utils from "../Utils";
-import OperationError from "../OperationError";
+import Utils from "./Utils";
+import OperationError from "./OperationError";
 
 /**
  * Base64's the input byte array using the given alphabet, returning a string.
