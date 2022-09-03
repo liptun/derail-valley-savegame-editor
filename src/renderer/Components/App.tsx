@@ -6,9 +6,10 @@ import {
 import { ElectronAPI } from "../../preload";
 import ReactJson from "react-json-view";
 import { Savegame } from "../../types/savegame";
-import styled, { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from "styled-components";
 import LatoRegular from "../fonts/Lato-Regular.ttf";
-import DVLogo from "../assets/dvlogo.png";
+import Topbar from "./Topbar";
+import ResetCSS from "./ResetCSS";
 
 declare global {
     interface Window {
@@ -30,9 +31,6 @@ const GlobalStyles = createGlobalStyle`
 	}
 `;
 
-const Logo = styled.img`
-    width: 180px;
-`;
 
 export interface AppContextType {
     savegame: Savegame;
@@ -67,6 +65,7 @@ const App: FC = () => {
     return (
         <>
             <GlobalStyles />
+            <ResetCSS />
             <AppContext.Provider
                 value={{
                     savegame: savegameJSON,
@@ -75,8 +74,7 @@ const App: FC = () => {
                     isFileOpen: false,
                 }}
             >
-                <Logo src={DVLogo} />
-                <h2>Savegame Editor</h2>
+                <Topbar />
                 <p>{path}</p>
                 <button onClick={onOpenFileHandle}>Open savegame</button>
                 {path && (
