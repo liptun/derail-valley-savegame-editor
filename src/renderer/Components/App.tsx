@@ -6,6 +6,8 @@ import {
 import { ElectronAPI } from "../../preload";
 import ReactJson from "react-json-view";
 import { Savegame } from "../../types/savegame";
+import { createGlobalStyle } from "styled-components";
+import LatoRegular from "../fonts/Lato-Regular.ttf";
 
 declare global {
     interface Window {
@@ -13,11 +15,23 @@ declare global {
     }
 }
 
+const GlobalStyles = createGlobalStyle`
+    @font-face {
+        font-family: "Lato";
+        font-weight: 400;
+        font-style: normal;
+        src: url(${LatoRegular});
+    }
+
+	body {
+		font-family: "Lato";
+	}
+`;
+
 const App: FC = () => {
     const [isLoading, setLoading] = useState(false);
     const [path, setPath] = useState("");
     const [savegameJSON, setSavegameJSON] = useState<Savegame>(null);
-    const [savegame, setSavegame] = useState("");
 
     const onOpenFileHandle = async () => {
         setLoading(true);
@@ -37,10 +51,10 @@ const App: FC = () => {
 
     return (
         <>
+            <GlobalStyles />
             <h1>Derail Valley</h1>
             <h2>Savegame Editor</h2>
             <p>{path}</p>
-            <p>{savegame}</p>
             <button onClick={onOpenFileHandle}>Open savegame</button>
             {path && (
                 <button onClick={onWriteFileHandle}>Write savegame</button>
