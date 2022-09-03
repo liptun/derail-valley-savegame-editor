@@ -34,10 +34,7 @@ export interface HandleFileWriteArgs {
     path: string;
     content: string;
 }
-const handleFileWrite = (
-    _: Event,
-    { path, content }: HandleFileWriteArgs
-) => {
+const handleFileWrite = (_: Event, { path, content }: HandleFileWriteArgs) => {
     fs.writeFileSync(path, content);
 };
 
@@ -46,12 +43,13 @@ const createWindow = (): void => {
     const mainWindow = new BrowserWindow({
         height: 600,
         width: 800,
+        autoHideMenuBar: true,
         webPreferences: {
-            nodeIntegration: true,
-            sandbox: false,
             preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
     });
+
+    mainWindow.setMenu(null);
 
     // and load the index.html of the app.
     mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
