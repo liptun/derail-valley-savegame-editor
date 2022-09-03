@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from "react";
+import React, { createContext, FC, useCallback, useState } from "react";
 import {
     savegameDecodeToJSON,
     savegameEncodeFromJSON,
@@ -6,8 +6,9 @@ import {
 import { ElectronAPI } from "../../preload";
 import ReactJson from "react-json-view";
 import { Savegame } from "../../types/savegame";
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import LatoRegular from "../fonts/Lato-Regular.ttf";
+import DVLogo from "../assets/dvlogo.png";
 
 declare global {
     interface Window {
@@ -25,8 +26,22 @@ const GlobalStyles = createGlobalStyle`
 
 	body {
 		font-family: "Lato";
+        background-color: #eee;
 	}
 `;
+
+const Logo = styled.img`
+    width: 180px;
+`;
+
+export interface AppContextType {
+    savegame: Savegame;
+    path: string;
+    isLoading: boolean;
+    isFileOpen: boolean;
+}
+
+export const AppContext = createContext({});
 
 const App: FC = () => {
     const [isLoading, setLoading] = useState(false);
@@ -52,15 +67,24 @@ const App: FC = () => {
     return (
         <>
             <GlobalStyles />
-            <h1>Derail Valley</h1>
-            <h2>Savegame Editor</h2>
-            <p>{path}</p>
-            <button onClick={onOpenFileHandle}>Open savegame</button>
-            {path && (
-                <button onClick={onWriteFileHandle}>Write savegame</button>
-            )}
-            {isLoading && <p>Loading...</p>}
-            <ReactJson src={savegameJSON} />
+            <AppContext.Provider
+                value={{
+                    savegame: savegameJSON,
+                    path,
+                    isLoading,
+                    isFileOpen: false,
+                }}
+            >
+                <Logo src={DVLogo} />
+                <h2>Savegame Editor</h2>
+                <p>{path}</p>
+                <button onClick={onOpenFileHandle}>Open savegame</button>
+                {path && (
+                    <button onClick={onWriteFileHandle}>Write savegame</button>
+                )}
+                {isLoading && <p>Loading...</p>}
+                <ReactJson src={savegameJSON} />
+            </AppContext.Provider>
         </>
     );
 };
