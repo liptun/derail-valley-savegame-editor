@@ -10,6 +10,8 @@ import Topbar from "./Topbar";
 import ResetCSS from "./ResetCSS";
 import Fonts from "./Fonts";
 import OpenFile from "./OpenFile";
+import Loader from "./Loader";
+import CloseFile from "./CloseFile";
 
 declare global {
     interface Window {
@@ -62,27 +64,31 @@ export const AppContext = createContext<AppContextType>({
 });
 
 const App: FC = () => {
-    const [isLoading, setLoading] = useState(false);
-    const [isReadError, setReadError] = useState(false);
     const [path, setPath] = useState("");
+    const [isLoading, setLoading] = useState(false);
+    const [isFileOpen, setFileOpen] = useState(false);
+    const [isReadError, setReadError] = useState(false);
     const [savegameJSON, setSavegameJSON] = useState<Savegame>(null);
 
     const onOpenFileHandle = async () => {
         setLoading(true);
         setReadError(false);
+        setFileOpen(false);
         const { content, path } = await window.electronAPI.openFile();
         setPath(path);
         savegameDecodeToJSON(content)
             .then((jsonString) => {
                 setLoading(false);
                 setReadError(false);
+                setFileOpen(true);
                 setSavegameJSON(JSON.parse(jsonString));
             })
-            .catch((e) => {
+            .catch(() => {
                 setLoading(false);
                 setReadError(true);
             });
     };
+
     const onWriteFileHandle = useCallback(() => {
         if (savegameJSON) {
             const encodedSavegame = savegameEncodeFromJSON(savegameJSON);
@@ -90,7 +96,10 @@ const App: FC = () => {
         }
     }, [savegameJSON]);
 
-    const onCloseFileHandle = useCallback(() => {}, []);
+    const onCloseFileHandle = useCallback(() => {
+        setFileOpen(false);
+        setSavegameJSON(null);
+    }, []);
 
     return (
         <>
@@ -102,7 +111,7 @@ const App: FC = () => {
                     savegame: savegameJSON,
                     path,
                     isLoading,
-                    isFileOpen: false,
+                    isFileOpen,
                     isReadError,
                     onOpenFileHandle,
                     onWriteFileHandle,
@@ -112,7 +121,9 @@ const App: FC = () => {
                 <AppWrapper>
                     <Topbar />
                     <AppContent>
-                        <OpenFile />
+                        {!isFileOpen && !isLoading && <OpenFile />}
+                        {isLoading && <Loader />}
+                        {isFileOpen && <CloseFile />}
                     </AppContent>
                 </AppWrapper>
             </AppContext.Provider>

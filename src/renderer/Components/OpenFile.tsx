@@ -1,5 +1,6 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import styled from "styled-components";
+import {AppContext} from "./App";
 import Button from "./Button";
 
 const Wrapper = styled.div`
@@ -30,6 +31,7 @@ const Path = styled.code`
 `;
 
 const OpenFile: FC = () => {
+    const context = useContext(AppContext)
     return (
         <Wrapper>
             <Label>Load savegame file</Label>
@@ -37,7 +39,7 @@ const OpenFile: FC = () => {
             <Path>
                 /steamapps/common/Derail Valley/DerailValley_Data/SaveGameData
             </Path>
-            <Button label="Open" />
+            <Button label="Open" onClick={() => context.onOpenFileHandle()}/>
         </Wrapper>
     );
 };
