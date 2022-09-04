@@ -7,9 +7,10 @@ import { ElectronAPI } from "../../preload";
 import ReactJson from "react-json-view";
 import { Savegame } from "../../types/savegame";
 import { createGlobalStyle } from "styled-components";
-import LatoRegular from "../fonts/Lato-Regular.ttf";
 import Topbar from "./Topbar";
 import ResetCSS from "./ResetCSS";
+import Button from "./Button";
+import Fonts from "./Fonts";
 
 declare global {
     interface Window {
@@ -18,42 +19,46 @@ declare global {
 }
 
 const GlobalStyles = createGlobalStyle`
-    @font-face {
-        font-family: "Lato";
-        font-weight: 400;
-        font-style: normal;
-        src: url(${LatoRegular});
+    html {
+        font-size: 16px;
     }
-
 	body {
-		font-family: "Lato";
         background-color: #eee;
 	}
 `;
-
 
 export interface AppContextType {
     savegame: Savegame;
     path: string;
     isLoading: boolean;
     isFileOpen: boolean;
+    isReadError: boolean;
 }
 
 export const AppContext = createContext({});
 
 const App: FC = () => {
     const [isLoading, setLoading] = useState(false);
+    const [isReadError, setReadError] = useState(false);
     const [path, setPath] = useState("");
     const [savegameJSON, setSavegameJSON] = useState<Savegame>(null);
 
     const onOpenFileHandle = async () => {
         setLoading(true);
+        setReadError(false);
         const { content, path } = await window.electronAPI.openFile();
         setPath(path);
-        savegameDecodeToJSON(content).then((jsonString) => {
-            setLoading(false);
-            setSavegameJSON(JSON.parse(jsonString));
-        });
+        savegameDecodeToJSON(content)
+            .then((jsonString) => {
+                setLoading(false);
+                setReadError(false);
+                setSavegameJSON(JSON.parse(jsonString));
+            })
+            .catch((e) => {
+                setLoading(false);
+                console.log("wyjebało błąd");
+                setReadError(true);
+            });
     };
     const onWriteFileHandle = useCallback(() => {
         if (savegameJSON) {
@@ -65,6 +70,7 @@ const App: FC = () => {
     return (
         <>
             <GlobalStyles />
+            <Fonts />
             <ResetCSS />
             <AppContext.Provider
                 value={{
@@ -72,11 +78,14 @@ const App: FC = () => {
                     path,
                     isLoading,
                     isFileOpen: false,
+                    isReadError,
                 }}
             >
                 <Topbar />
                 <p>{path}</p>
+                {isReadError && <p>Wyjebało błąd</p>}
                 <button onClick={onOpenFileHandle}>Open savegame</button>
+                <Button label="Hehe" />
                 {path && (
                     <button onClick={onWriteFileHandle}>Write savegame</button>
                 )}

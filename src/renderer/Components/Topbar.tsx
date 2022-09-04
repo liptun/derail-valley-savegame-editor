@@ -20,12 +20,12 @@ const Title = styled.h2`
     letter-spacing: 3px;
     text-transform: uppercase;
     margin-bottom: 4px;
-`
+`;
 const Author = styled.h3`
-    font-size: .8em;
+    font-size: 0.8em;
     opacity: 0.5;
     margin-top: 4px;
-`
+`;
 
 const Topbar: FC = () => {
     return (
