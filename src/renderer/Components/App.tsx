@@ -6,11 +6,11 @@ import {
 import { ElectronAPI } from "../../preload";
 import ReactJson from "react-json-view";
 import { Savegame } from "../../types/savegame";
-import { createGlobalStyle } from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import Topbar from "./Topbar";
 import ResetCSS from "./ResetCSS";
-import Button from "./Button";
 import Fonts from "./Fonts";
+import OpenFile from "./OpenFile";
 
 declare global {
     interface Window {
@@ -22,9 +22,22 @@ const GlobalStyles = createGlobalStyle`
     html {
         font-size: 16px;
     }
-	body {
-        background-color: #eee;
-	}
+`;
+
+const AppWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100vw;
+`;
+
+const AppContent = styled.div`
+    flex-grow: 1;
+    background-color: #eeeeee;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 `;
 
 export interface AppContextType {
@@ -81,16 +94,19 @@ const App: FC = () => {
                     isReadError,
                 }}
             >
-                <Topbar />
-                <p>{path}</p>
-                {isReadError && <p>Wyjebało błąd</p>}
-                <button onClick={onOpenFileHandle}>Open savegame</button>
-                <Button label="Hehe" />
-                {path && (
-                    <button onClick={onWriteFileHandle}>Write savegame</button>
-                )}
-                {isLoading && <p>Loading...</p>}
-                <ReactJson src={savegameJSON} />
+                <AppWrapper>
+                    <Topbar />
+                    <AppContent>
+                        <OpenFile />
+                        {path && (
+                            <button onClick={onWriteFileHandle}>
+                                Write savegame
+                            </button>
+                        )}
+                        {isLoading && <p>Loading...</p>}
+                        <ReactJson src={savegameJSON} />
+                    </AppContent>
+                </AppWrapper>
             </AppContext.Provider>
         </>
     );
