@@ -4,7 +4,6 @@ import {
     savegameEncodeFromJSON,
 } from "../../utils/savegame";
 import { ElectronAPI } from "../../preload";
-import ReactJson from "react-json-view";
 import { Savegame } from "../../types/savegame";
 import styled, { createGlobalStyle } from "styled-components";
 import Topbar from "./Topbar";
@@ -41,14 +40,26 @@ const AppContent = styled.div`
 `;
 
 export interface AppContextType {
-    savegame: Savegame;
+    savegame: Savegame | Object;
     path: string;
     isLoading: boolean;
     isFileOpen: boolean;
     isReadError: boolean;
+    onOpenFileHandle: () => void;
+    onWriteFileHandle: () => void;
+    onCloseFileHandle: () => void;
 }
 
-export const AppContext = createContext({});
+export const AppContext = createContext<AppContextType>({
+    savegame: {},
+    path: "",
+    isLoading: false,
+    isFileOpen: false,
+    isReadError: false,
+    onOpenFileHandle: () => {},
+    onWriteFileHandle: () => {},
+    onCloseFileHandle: () => {},
+});
 
 const App: FC = () => {
     const [isLoading, setLoading] = useState(false);
@@ -69,7 +80,6 @@ const App: FC = () => {
             })
             .catch((e) => {
                 setLoading(false);
-                console.log("wyjebało błąd");
                 setReadError(true);
             });
     };
@@ -79,6 +89,8 @@ const App: FC = () => {
             window.electronAPI.writeFile({ content: encodedSavegame, path });
         }
     }, [savegameJSON]);
+
+    const onCloseFileHandle = useCallback(() => {}, []);
 
     return (
         <>
@@ -92,19 +104,15 @@ const App: FC = () => {
                     isLoading,
                     isFileOpen: false,
                     isReadError,
+                    onOpenFileHandle,
+                    onWriteFileHandle,
+                    onCloseFileHandle,
                 }}
             >
                 <AppWrapper>
                     <Topbar />
                     <AppContent>
                         <OpenFile />
-                        {path && (
-                            <button onClick={onWriteFileHandle}>
-                                Write savegame
-                            </button>
-                        )}
-                        {isLoading && <p>Loading...</p>}
-                        <ReactJson src={savegameJSON} />
                     </AppContent>
                 </AppWrapper>
             </AppContext.Provider>
