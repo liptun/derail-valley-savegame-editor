@@ -20,7 +20,12 @@ export interface Savegame {
     Version?: number;
     License_TrainDriver?: boolean;
     License_DE2?: boolean;
-    License_DE_6?: boolean;
+    License_DE6?: boolean;
+    License_ConcurrentJobs1?: boolean,
+    License_ConcurrentJobs2?:boolean,
+    License_SH282?:boolean,
+    License_MultipleUnit?:boolean,
+    License_ManualService?:boolean,
     Job_Licenses?: number;
     Player_money?: number;
     Player_position?: Position;

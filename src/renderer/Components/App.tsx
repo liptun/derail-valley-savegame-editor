@@ -17,6 +17,7 @@ import Topbar from "./Topbar";
 import ResetCSS from "./ResetCSS";
 import Fonts from "./Fonts";
 import OpenFile from "./OpenFile";
+import WriteFile from "./WriteFile";
 import Loader from "./Loader";
 import CloseFile from "./CloseFile";
 import ReadError from "./ReadError";
@@ -81,21 +82,24 @@ export const AppContext = createContext<AppContextType>({
     onCloseFileHandle: () => {},
 });
 
-enum SavegameActionType {
+export enum SavegameActionType {
     Open = "open",
     Close = "close",
+    SetPlayerMoney = "set-player-money",
 }
-interface SavegameAction {
+export interface SavegameAction {
     type: SavegameActionType;
     payload?: any;
 }
 
-const savegameReducer = (state: Savegame, action: SavegameAction) => {
+export const savegameReducer = (state: Savegame, action: SavegameAction) => {
     switch (action.type) {
-        case "open":
+        case SavegameActionType.Open:
             return action.payload;
-        case "close":
+        case SavegameActionType.Close:
             return {};
+        case SavegameActionType.SetPlayerMoney:
+            return { ...state, Player_money: action.payload.money };
         default:
             return state;
     }
@@ -171,6 +175,7 @@ const App: FC = () => {
                     <AppHeader>
                         {isReadError && <ReadError />}
                         {isFileOpen && <CloseFile />}
+                        {isFileOpen && <WriteFile />}
                     </AppHeader>
                     <AppContent>
                         {!isFileOpen && !isLoading && <OpenFile />}
