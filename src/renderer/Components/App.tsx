@@ -1,4 +1,11 @@
-import React, { createContext, FC, useCallback, useState } from "react";
+import React, {
+    createContext,
+    FC,
+    Reducer,
+    useCallback,
+    useReducer,
+    useState,
+} from "react";
 import {
     savegameDecodeToJSON,
     savegameEncodeFromJSON,
@@ -49,7 +56,8 @@ const AppContent = styled.div`
 `;
 
 export interface AppContextType {
-    savegame: Savegame | Object;
+    savegame: Savegame;
+    savegameDispath: (action: SavegameAction) => void;
     path: string;
     isLoading: boolean;
     isFileOpen: boolean;
@@ -62,6 +70,7 @@ export interface AppContextType {
 
 export const AppContext = createContext<AppContextType>({
     savegame: {},
+    savegameDispath: () => {},
     path: "",
     isLoading: false,
     isFileOpen: false,
@@ -72,13 +81,30 @@ export const AppContext = createContext<AppContextType>({
     onCloseFileHandle: () => {},
 });
 
+enum SavegameActionType {
+    Init = "init",
+}
+interface SavegameAction {
+    type: SavegameActionType;
+    payload: any;
+}
+
+const savegameReducer = (state: Savegame, action: SavegameAction) => {
+    switch (action.type) {
+        case "init":
+            return action.payload;
+        default:
+            return state;
+    }
+};
+
 const App: FC = () => {
     const [path, setPath] = useState("");
     const [isLoading, setLoading] = useState(false);
     const [isFileOpen, setFileOpen] = useState(false);
     const [isReadError, setReadError] = useState(false);
     const [readErrorMessage, setReadErrorMessage] = useState("");
-    const [savegameJSON, setSavegameJSON] = useState<Savegame>(null);
+    const [savegameJSON, savegameDispath] = useReducer(savegameReducer, {});
 
     const onOpenFileHandle = async () => {
         setLoading(true);
@@ -91,7 +117,11 @@ const App: FC = () => {
                 setLoading(false);
                 setReadError(false);
                 setFileOpen(true);
-                setSavegameJSON(JSON.parse(jsonString));
+                const parsedJSON = JSON.parse(jsonString);
+                savegameDispath({
+                    type: SavegameActionType.Init,
+                    payload: parsedJSON,
+                });
             })
             .catch((error) => {
                 setReadErrorMessage(error);
@@ -109,7 +139,7 @@ const App: FC = () => {
 
     const onCloseFileHandle = useCallback(() => {
         setFileOpen(false);
-        setSavegameJSON(null);
+        //setSavegameJSON({});
     }, []);
 
     return (
@@ -120,6 +150,7 @@ const App: FC = () => {
             <AppContext.Provider
                 value={{
                     savegame: savegameJSON,
+                    savegameDispath,
                     path,
                     isLoading,
                     isFileOpen,
