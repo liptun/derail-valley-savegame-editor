@@ -1,7 +1,8 @@
 import React, { FC, useContext } from "react";
 import styled from "styled-components";
-import {AppContext} from "./App";
+import { AppContext } from "./App";
 import Button from "./Button";
+import Path from "./Path";
 
 const Wrapper = styled.div`
     display: flex;
@@ -21,17 +22,9 @@ const Label = styled.p`
 const Hint = styled.p`
     font-size: 0.8em;
 `;
-const Path = styled.code`
-    font-size: 0.8em;
-    font-family: monospace;
-    background-color: #ccc;
-    padding: 8px 12px;
-    color: #333;
-    border-radius: 8px;
-`;
 
 const OpenFile: FC = () => {
-    const context = useContext(AppContext)
+    const context = useContext(AppContext);
     return (
         <Wrapper>
             <Label>Load savegame file</Label>
@@ -39,7 +32,7 @@ const OpenFile: FC = () => {
             <Path>
                 /steamapps/common/Derail Valley/DerailValley_Data/SaveGameData
             </Path>
-            <Button label="Open" onClick={() => context.onOpenFileHandle()}/>
+            <Button onClick={() => context.onOpenFileHandle()}>Open file</Button>
         </Wrapper>
     );
 };

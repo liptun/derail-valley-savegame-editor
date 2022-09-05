@@ -16,10 +16,11 @@ export const savegameDecodeToJSON = (savegame: string): Promise<string> =>
                 iv,
             });
             resolve(AESDecrypted as string);
-        } catch (e) {
-            reject(e);
+        } catch (_) {
+            reject("Unable to read savegame file");
         }
     });
+
 export const savegameEncodeFromJSON = (savegame: any) => {
     const jsonString = JSON.stringify(savegame);
     const AESEncrypted = AESEncrypt({ input: jsonString, key, iv });

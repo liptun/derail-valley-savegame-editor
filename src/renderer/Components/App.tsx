@@ -12,6 +12,8 @@ import Fonts from "./Fonts";
 import OpenFile from "./OpenFile";
 import Loader from "./Loader";
 import CloseFile from "./CloseFile";
+import ReadError from "./ReadError";
+import SavegameEditor from "./SavegameEditor";
 
 declare global {
     interface Window {
@@ -30,11 +32,16 @@ const AppWrapper = styled.div`
     flex-direction: column;
     min-height: 100vh;
     width: 100vw;
+    background-color: #eeeeee;
+`;
+
+const AppHeader = styled.div`
+    display: flex;
+    flex-direction: column;
 `;
 
 const AppContent = styled.div`
     flex-grow: 1;
-    background-color: #eeeeee;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -47,6 +54,7 @@ export interface AppContextType {
     isLoading: boolean;
     isFileOpen: boolean;
     isReadError: boolean;
+    readErrorMessage: string;
     onOpenFileHandle: () => void;
     onWriteFileHandle: () => void;
     onCloseFileHandle: () => void;
@@ -58,6 +66,7 @@ export const AppContext = createContext<AppContextType>({
     isLoading: false,
     isFileOpen: false,
     isReadError: false,
+    readErrorMessage: "",
     onOpenFileHandle: () => {},
     onWriteFileHandle: () => {},
     onCloseFileHandle: () => {},
@@ -68,6 +77,7 @@ const App: FC = () => {
     const [isLoading, setLoading] = useState(false);
     const [isFileOpen, setFileOpen] = useState(false);
     const [isReadError, setReadError] = useState(false);
+    const [readErrorMessage, setReadErrorMessage] = useState("");
     const [savegameJSON, setSavegameJSON] = useState<Savegame>(null);
 
     const onOpenFileHandle = async () => {
@@ -83,7 +93,8 @@ const App: FC = () => {
                 setFileOpen(true);
                 setSavegameJSON(JSON.parse(jsonString));
             })
-            .catch(() => {
+            .catch((error) => {
+                setReadErrorMessage(error);
                 setLoading(false);
                 setReadError(true);
             });
@@ -116,14 +127,19 @@ const App: FC = () => {
                     onOpenFileHandle,
                     onWriteFileHandle,
                     onCloseFileHandle,
+                    readErrorMessage,
                 }}
             >
                 <AppWrapper>
                     <Topbar />
+                    <AppHeader>
+                        {isReadError && <ReadError />}
+                        {isFileOpen && <CloseFile />}
+                    </AppHeader>
                     <AppContent>
                         {!isFileOpen && !isLoading && <OpenFile />}
                         {isLoading && <Loader />}
-                        {isFileOpen && <CloseFile />}
+                        {isFileOpen && <SavegameEditor />}
                     </AppContent>
                 </AppWrapper>
             </AppContext.Provider>
