@@ -82,17 +82,21 @@ export const AppContext = createContext<AppContextType>({
 });
 
 enum SavegameActionType {
-    Init = "init",
+    Open = "open",
+    Close = "close",
 }
 interface SavegameAction {
     type: SavegameActionType;
-    payload: any;
+    payload?: any;
 }
 
 const savegameReducer = (state: Savegame, action: SavegameAction) => {
+    console.log({ state, action });
     switch (action.type) {
-        case "init":
+        case "open":
             return action.payload;
+        case "close":
+            return {};
         default:
             return state;
     }
@@ -119,7 +123,7 @@ const App: FC = () => {
                 setFileOpen(true);
                 const parsedJSON = JSON.parse(jsonString);
                 savegameDispath({
-                    type: SavegameActionType.Init,
+                    type: SavegameActionType.Open,
                     payload: parsedJSON,
                 });
             })
@@ -139,6 +143,9 @@ const App: FC = () => {
 
     const onCloseFileHandle = useCallback(() => {
         setFileOpen(false);
+        savegameDispath({
+            type: SavegameActionType.Close,
+        });
     }, []);
 
     return (
