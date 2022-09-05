@@ -91,7 +91,6 @@ interface SavegameAction {
 }
 
 const savegameReducer = (state: Savegame, action: SavegameAction) => {
-    console.log({ state, action });
     switch (action.type) {
         case "open":
             return action.payload;
