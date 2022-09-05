@@ -104,7 +104,7 @@ const App: FC = () => {
     const [isFileOpen, setFileOpen] = useState(false);
     const [isReadError, setReadError] = useState(false);
     const [readErrorMessage, setReadErrorMessage] = useState("");
-    const [savegameJSON, savegameDispath] = useReducer(savegameReducer, {});
+    const [savegame, savegameDispath] = useReducer(savegameReducer, {});
 
     const onOpenFileHandle = async () => {
         setLoading(true);
@@ -131,15 +131,14 @@ const App: FC = () => {
     };
 
     const onWriteFileHandle = useCallback(() => {
-        if (savegameJSON) {
-            const encodedSavegame = savegameEncodeFromJSON(savegameJSON);
+        if (savegame) {
+            const encodedSavegame = savegameEncodeFromJSON(savegame);
             window.electronAPI.writeFile({ content: encodedSavegame, path });
         }
-    }, [savegameJSON]);
+    }, [savegame]);
 
     const onCloseFileHandle = useCallback(() => {
         setFileOpen(false);
-        //setSavegameJSON({});
     }, []);
 
     return (
@@ -149,7 +148,7 @@ const App: FC = () => {
             <ResetCSS />
             <AppContext.Provider
                 value={{
-                    savegame: savegameJSON,
+                    savegame,
                     savegameDispath,
                     path,
                     isLoading,
